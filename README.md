@@ -1,6 +1,6 @@
-# 📘 St Mary’s Digital Library System
+# St Mary’s Digital Library System
 
-## 📖 Overview
+## Overview
 The St Mary’s Digital Library System is a Java-based application designed to modernise the management of library operations.  
 It replaces manual processes with a structured system for managing books, members, and borrowing activities.
 
@@ -8,36 +8,36 @@ The system supports both:
 - Console-based interaction
 - Graphical User Interface (GUI) using Java Swing
 
-## 🎯 Features
+## Features
 
-### 📚 Book Management
+### Book Management
 - Add new books
 - View all books
 - Update book details
 - Delete books with confirmation
 - Search books by title, author, or ID
 
-### 👥 Member Management
+### Member Management
 - Register new members
 - View member list
 - Update member information
 - Delete members
 - Search members
 
-### 🔄 Borrowing System
+### Borrowing System
 - Borrow books with due dates
 - Return books
 - Track borrowing records
 - Automatically detect overdue books
 
-### 🔐 User Authentication & Roles
+### User Authentication & Roles
 - Secure login system
 - Role-based access:
   - Admin – full access
   - Librarian – restricted access
 - Admin-only user management
 
-## 🖥️ User Interfaces
+##  User Interfaces
 
 ### Console Application
 - Menu-driven system
@@ -51,7 +51,7 @@ The system supports both:
 - Buttons for actions (Add, Update, Delete, Refresh)
 - Styled UI with modern design
 
-## 🗄️ Database
+##  Database
 
 - SQLite database (library.db)
 - JDBC used for connectivity
@@ -64,7 +64,7 @@ The system supports both:
 - users
 - sessions
 
-## 🏗️ System Architecture
+## System Architecture
 
 UI Layer (Swing / Console)  
 ↓  
@@ -74,7 +74,7 @@ DAO Layer (Database Access)
 ↓  
 SQLite Database  
 
-## ⚙️ Technologies Used
+## Technologies Used
 
 - Java (JDK 22+)
 - Java Swing (GUI)
@@ -82,27 +82,27 @@ SQLite Database
 - JDBC (SQLite Driver)
 - Java Collections Framework
 
-## 🚀 How to Run
+## How to Run
 
 1. Clone or Download Project
 2. Open in IDE (VS Code / NetBeans / IntelliJ)
 3. Ensure SQLite JDBC driver is added
 4. Run Main.java
 
-## 🔑 Default Login
+## Default Login
 
 Username: admin  
 Password: admin123  
 Role: ADMIN  
 
-## 📊 Advanced Features
+## Advanced Features
 
 - Role-based access control
 - Overdue book detection
 - Search & filtering functionality
 - Styled GUI (modern UI design)
 
-## 🧪 Validation & Error Handling
+## Validation & Error Handling
 
 - Numeric validation for IDs
 - Email format validation
@@ -116,7 +116,7 @@ Role: ADMIN
 - Export to PDF/Excel
 - Advanced filtering and analytics
 
-## 📂 Project Structure
+## Project Structure
 
 src/  
  ├── dao/  
@@ -125,13 +125,13 @@ src/
  ├── services/  
  ├── ui/  
 
-## 👨‍💻 Author
+## Author
 
 Jeffrey Oben  
 St Mary’s University  
 CPS4005 – Object-Oriented Programming  
 
-## 📌 Conclusion
+## Conclusion
 
 This system demonstrates:
 - Object-Oriented Programming principles
