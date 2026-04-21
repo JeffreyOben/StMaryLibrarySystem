@@ -109,7 +109,7 @@ Role: ADMIN
 - Exception handling for database operations
 - User-friendly error messages
 
-## 📈 Future Improvements
+## Future Improvements
 
 - Charts dashboard (data visualisation)
 - Multi-threaded background loading
