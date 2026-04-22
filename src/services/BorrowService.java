@@ -9,7 +9,7 @@ public class BorrowService {
 
     // ================= BORROW BOOK =================
     public void borrowBook(int bookId, int memberId, String borrowDate, String dueDate) {
-        Borrow borrow = new Borrow(bookId, memberId, borrowDate, dueDate, "BORROWED");
+        Borrow borrow = new Borrow(0, bookId, memberId, borrowDate, dueDate, "BORROWED");
         borrowDAO.borrowBook(borrow);
     }
 
