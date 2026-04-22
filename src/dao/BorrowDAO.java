@@ -18,7 +18,7 @@ public class BorrowDAO {
         String sql = "INSERT INTO borrows(book_id, member_id, borrow_date, due_date, status) VALUES(?, ?, ?, ?, ?)";
 
         try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, borrow.getBookId());
             stmt.setInt(2, borrow.getMemberId());
@@ -44,8 +44,8 @@ public class BorrowDAO {
         String sql = "SELECT * FROM borrows";
 
         try (Connection conn = DBConnection.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
 
             while (rs.next()) {
                 System.out.println(
@@ -70,7 +70,7 @@ public class BorrowDAO {
         String sql = "UPDATE borrows SET status = 'RETURNED' WHERE id = ?";
 
         try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, borrowId);
             int rows = stmt.executeUpdate();
@@ -113,8 +113,8 @@ public class BorrowDAO {
         String sql = "SELECT * FROM borrows WHERE status = 'BORROWED'";
 
         try (Connection conn = DBConnection.connect();
-             Statement stmt = conn.createStatement();
-             ResultSet rs = stmt.executeQuery(sql)) {
+            Statement stmt = conn.createStatement();
+            ResultSet rs = stmt.executeQuery(sql)) {
 
             System.out.println("=== OVERDUE BOOKS ===");
 
