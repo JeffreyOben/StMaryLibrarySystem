@@ -14,11 +14,14 @@ public class BorrowPanel extends JPanel {
 
     private JTable table;
     private DefaultTableModel model;
+    private JLabel loading;
 
     public BorrowPanel() {
 
         setLayout(new BorderLayout());
         UIStyle.stylePanel(this);
+        loading = new JLabel("Loading...");
+        add(loading, BorderLayout.NORTH);
 
         // ================= TABLE =================
         model = new DefaultTableModel();
@@ -66,43 +69,10 @@ public class BorrowPanel extends JPanel {
 
         // ================= ACTIONS =================
 
-        // THREAD-SAFE LOAD
-        loadBtn.addActionListener(e -> {
-
-            new SwingWorker<Void, Void>() {
-
-                @Override
-                protected Void doInBackground() {
-                    loadBorrowRecords();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    JOptionPane.showMessageDialog(BorrowPanel.this,
-                            "Borrow records loaded!");
-                }
-
-            }.execute();
-        });
-
+        loadBtn.addActionListener(e -> loadBorrowAsync());
         borrowBtn.addActionListener(e -> openBorrowDialog());
-
         returnBtn.addActionListener(e -> returnBook());
-
-        // THREAD-SAFE OVERDUE CHECK
-        overdueBtn.addActionListener(e -> {
-
-            new SwingWorker<Void, Void>() {
-
-                @Override
-                protected Void doInBackground() {
-                    checkOverdue();
-                    return null;
-                }
-
-            }.execute();
-        });
+        overdueBtn.addActionListener(e -> checkOverdueAsync());
 
         deleteBtn.addActionListener(e -> deleteBorrow());
 
@@ -111,12 +81,39 @@ public class BorrowPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Borrow PDF Exported!");
         });
 
-        // THREAD-SAFE INITIAL LOAD
+        // INITIAL LOAD
+        loadBorrowAsync();
+    }
+
+    // ================= ASYNC LOAD =================
+    private void loadBorrowAsync() {
+
         new SwingWorker<Void, Void>() {
 
             @Override
             protected Void doInBackground() {
+                loading.setVisible(true);
                 loadBorrowRecords();
+                return null;
+            }
+
+            @Override
+            protected void done() {
+                loading.setVisible(false);
+                System.out.println("Borrow records loaded in background ✅");
+            }
+
+        }.execute();
+    }
+
+    // ================= ASYNC OVERDUE =================
+    private void checkOverdueAsync() {
+
+        new SwingWorker<Void, Void>() {
+
+            @Override
+            protected Void doInBackground() {
+                checkOverdue();
                 return null;
             }
 
@@ -191,7 +188,7 @@ public class BorrowPanel extends JPanel {
                     ps2.executeUpdate();
                 }
 
-                loadBorrowRecords();
+                loadBorrowAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage());
@@ -220,7 +217,7 @@ public class BorrowPanel extends JPanel {
             ps2.setInt(1, bookId);
             ps2.executeUpdate();
 
-            loadBorrowRecords();
+            loadBorrowAsync();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());
@@ -254,7 +251,8 @@ public class BorrowPanel extends JPanel {
 
             ps.setInt(1, id);
             ps.executeUpdate();
-            loadBorrowRecords();
+
+            loadBorrowAsync();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());

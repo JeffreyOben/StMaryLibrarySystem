@@ -12,11 +12,13 @@ public class MembersPanel extends JPanel {
 
     private JTable table;
     private DefaultTableModel model;
-
+    private JLabel loading;
     public MembersPanel() {
 
         setLayout(new BorderLayout());
         UIStyle.stylePanel(this);
+        loading = new JLabel("Loading...");
+        add(loading, BorderLayout.NORTH);
 
         // ================= TABLE =================
         model = new DefaultTableModel();
@@ -58,25 +60,7 @@ public class MembersPanel extends JPanel {
 
         // ================= ACTIONS =================
 
-        // THREAD-SAFE LOAD BUTTON
-        loadBtn.addActionListener(e -> {
-
-            new SwingWorker<Void, Void>() {
-
-                @Override
-                protected Void doInBackground() {
-                    loadMembers();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    JOptionPane.showMessageDialog(MembersPanel.this, "Members loaded!");
-                }
-
-            }.execute();
-        });
-
+        loadBtn.addActionListener(e -> loadMembersAsync());
         addBtn.addActionListener(e -> addMember());
         updateBtn.addActionListener(e -> updateMember());
         deleteBtn.addActionListener(e -> deleteMember());
@@ -86,18 +70,26 @@ public class MembersPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "Members PDF Exported!");
         });
 
-        // THREAD-SAFE INITIAL LOAD
+        // ================= INITIAL LOAD =================
+        loadMembersAsync();
+    }
+
+    // ================= ASYNC LOAD =================
+    private void loadMembersAsync() {
+
         new SwingWorker<Void, Void>() {
 
             @Override
             protected Void doInBackground() {
+                loading.setVisible(true);
                 loadMembers();
                 return null;
             }
 
             @Override
             protected void done() {
-                // no popup on startup
+                loading.setVisible(false);
+                System.out.println("Members loaded in background ✅");
             }
 
         }.execute();
@@ -168,7 +160,7 @@ public class MembersPanel extends JPanel {
                 ps.setString(4, type.getText());
 
                 ps.executeUpdate();
-                loadMembers();
+                loadMembersAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage());
@@ -207,7 +199,7 @@ public class MembersPanel extends JPanel {
                 ps.setInt(4, id);
 
                 ps.executeUpdate();
-                loadMembers();
+                loadMembersAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, e.getMessage());
@@ -229,7 +221,7 @@ public class MembersPanel extends JPanel {
 
             ps.setInt(1, id);
             ps.executeUpdate();
-            loadMembers();
+            loadMembersAsync();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, e.getMessage());

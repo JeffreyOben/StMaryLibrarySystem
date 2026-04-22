@@ -1,14 +1,16 @@
 package models;
 
 public class Borrow {
-
+    private int id;
     private int bookId;
     private int memberId;
     private String borrowDate;
     private String dueDate;
     private String status;
 
+        // OVERLOADED CONSTRUCTOR (used when ID is auto-generated in DB)
     public Borrow(int bookId, int memberId, String borrowDate, String dueDate, String status) {
+        this.id = 0;
         this.bookId = bookId;
         this.memberId = memberId;
         this.borrowDate = borrowDate;
@@ -16,7 +18,12 @@ public class Borrow {
         this.status = status;
     }
 
+
     // ================= GETTERS =================
+    public int getId() {
+        return id;
+    }
+
     public int getBookId() {
         return bookId;
     }

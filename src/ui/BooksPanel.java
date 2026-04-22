@@ -16,12 +16,15 @@ public class BooksPanel extends JPanel {
     private JTable table;
     private DefaultTableModel model;
     private JTextField searchField;
+    private JLabel loading;
 
     public BooksPanel() {
 
         setLayout(new BorderLayout());
 
         UIStyle.stylePanel(this);
+        loading = new JLabel("Loading...");
+        add(loading, BorderLayout.NORTH);
 
         // ================= TABLE =================
         model = new DefaultTableModel();
@@ -96,25 +99,7 @@ public class BooksPanel extends JPanel {
 
         // ================= ACTIONS =================
 
-        // THREAD-SAFE LOAD BUTTON
-        loadBtn.addActionListener(e -> {
-
-            new SwingWorker<Void, Void>() {
-
-                @Override
-                protected Void doInBackground() {
-                    loadBooks();
-                    return null;
-                }
-
-                @Override
-                protected void done() {
-                    JOptionPane.showMessageDialog(BooksPanel.this, "Books loaded!");
-                }
-
-            }.execute();
-        });
-
+        loadBtn.addActionListener(e -> loadBooksAsync());
         addBtn.addActionListener(e -> openAddBookDialog());
         deleteBtn.addActionListener(e -> deleteBook());
         updateBtn.addActionListener(e -> updateBook());
@@ -131,18 +116,26 @@ public class BooksPanel extends JPanel {
             public void changedUpdate(DocumentEvent e) { searchBooks(); }
         });
 
-        // THREAD-SAFE INITIAL LOAD
+        // INITIAL LOAD
+        loadBooksAsync();
+    }
+
+    // ================= ASYNC LOADER =================
+    private void loadBooksAsync() {
+
         new SwingWorker<Void, Void>() {
 
             @Override
             protected Void doInBackground() {
+                loading.setVisible(true);
                 loadBooks();
                 return null;
             }
 
             @Override
             protected void done() {
-                // no popup on startup
+                loading.setVisible(false);
+                System.out.println("Books loaded in background ✅");
             }
 
         }.execute();
@@ -239,7 +232,7 @@ public class BooksPanel extends JPanel {
                 ps.executeUpdate();
 
                 JOptionPane.showMessageDialog(this, "Book added!");
-                loadBooks();
+                loadBooksAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Add Error: " + e.getMessage());
@@ -278,7 +271,7 @@ public class BooksPanel extends JPanel {
                 ps.setInt(2, id);
                 ps.executeUpdate();
 
-                loadBooks();
+                loadBooksAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Update Error: " + e.getMessage());
@@ -315,7 +308,7 @@ public class BooksPanel extends JPanel {
                 ps.setInt(1, id);
                 ps.executeUpdate();
 
-                loadBooks();
+                loadBooksAsync();
 
             } catch (Exception e) {
                 JOptionPane.showMessageDialog(this, "Delete Error: " + e.getMessage());

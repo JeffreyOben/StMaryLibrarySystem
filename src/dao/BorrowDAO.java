@@ -5,6 +5,8 @@ import models.Borrow;
 import utils.RefreshManager;
 
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BorrowDAO {
 
@@ -27,7 +29,6 @@ public class BorrowDAO {
             stmt.executeUpdate();
             System.out.println("Book borrowed successfully");
 
-            // REFRESH CHART
             RefreshManager.refreshCharts();
 
         } catch (Exception e) {
@@ -77,7 +78,7 @@ public class BorrowDAO {
             if (rows > 0) {
                 System.out.println("Book returned successfully");
 
-                // get book id
+                // Get book ID
                 String getBook = "SELECT book_id FROM borrows WHERE id = ?";
                 PreparedStatement ps = conn.prepareStatement(getBook);
                 ps.setInt(1, borrowId);
@@ -86,14 +87,13 @@ public class BorrowDAO {
                 if (rs.next()) {
                     int bookId = rs.getInt("book_id");
 
-                    // mark book available again
+                    // Mark book available again
                     String updateBook = "UPDATE books SET available = 1 WHERE id = ?";
                     PreparedStatement ps2 = conn.prepareStatement(updateBook);
                     ps2.setInt(1, bookId);
                     ps2.executeUpdate();
                 }
 
-                // REFRESH CHART
                 RefreshManager.refreshCharts();
 
             } else {
@@ -145,5 +145,40 @@ public class BorrowDAO {
         } catch (Exception e) {
             System.out.println("Overdue check error: " + e.getMessage());
         }
+    }
+
+    // ==============================
+    // FILTER BY DATE RANGE (ADVANCED FEATURE)
+    // ==============================
+    public List<Borrow> filterByDate(String start, String end) {
+
+        List<Borrow> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM borrows WHERE borrow_date BETWEEN ? AND ?";
+
+        try (Connection conn = DBConnection.connect();
+             PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            ps.setString(1, start);
+            ps.setString(2, end);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Borrow(
+                        rs.getInt("id"),
+                        rs.getInt("book_id"),
+                        rs.getInt("member_id"),
+                        rs.getString("borrow_date"),
+                        rs.getString("due_date"),
+                        rs.getString("status")
+                ));
+            }
+
+        } catch (Exception e) {
+            System.out.println("Filter Error: " + e.getMessage());
+        }
+
+        return list;
     }
 }

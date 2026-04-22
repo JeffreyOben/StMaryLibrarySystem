@@ -3,6 +3,10 @@ package dao;
 import database.DBConnection;
 import utils.RefreshManager;
 import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+import models.Book;
+import models.Borrow;
 
 public class BookDAO {
 
@@ -12,7 +16,7 @@ public class BookDAO {
         String sql = "INSERT INTO books(id, title, author, category, available) VALUES (?, ?, ?, ?, 1)";
 
         try (Connection conn = DBConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setInt(1, id);
             ps.setString(2, title);
@@ -79,6 +83,40 @@ public class BookDAO {
         } catch (Exception e) {
             System.out.println("Delete Error: " + e.getMessage());
         }
+    }
+        // ================= ADVANCED SEARCH =================
+    public List<Book> advancedSearch(String keyword) {
+
+        List<Book> list = new ArrayList<>();
+
+        String sql = "SELECT * FROM books WHERE title LIKE ? OR author LIKE ? OR category LIKE ?";
+
+        try (Connection conn = DBConnection.connect();
+            PreparedStatement ps = conn.prepareStatement(sql)) {
+
+            String search = "%" + keyword + "%";
+
+            ps.setString(1, search);
+            ps.setString(2, search);
+            ps.setString(3, search);
+
+            ResultSet rs = ps.executeQuery();
+
+            while (rs.next()) {
+                list.add(new Book(
+            rs.getInt("id"),
+            rs.getString("title"),
+            rs.getString("author"),
+            rs.getString("category"),
+            rs.getInt("available") == 1
+                ));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 
     // ================= UPDATE BOOK =================
@@ -165,7 +203,7 @@ public class BookDAO {
         String sql = "UPDATE books SET available = ? WHERE id = ?";
 
         try (Connection conn = DBConnection.connect();
-             PreparedStatement stmt = conn.prepareStatement(sql)) {
+            PreparedStatement stmt = conn.prepareStatement(sql)) {
 
             stmt.setInt(1, status);
             stmt.setInt(2, id);
@@ -179,4 +217,38 @@ public class BookDAO {
             System.out.println("Availability Update Error: " + e.getMessage());
         }
     }
+
+
+
+// ================= FILTER BORROWS BY DATE =================
+public List<Borrow> filterByDate(String start, String end) {
+
+    List<Borrow> list = new ArrayList<>();
+
+    String sql = "SELECT * FROM borrows WHERE borrow_date BETWEEN ? AND ?";
+
+    try (Connection conn = DBConnection.connect();
+        PreparedStatement ps = conn.prepareStatement(sql)) {
+
+        ps.setString(1, start);
+        ps.setString(2, end);
+
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            list.add(new Borrow(
+                    rs.getInt("book_id"),
+                    rs.getInt("member_id"),
+                    rs.getString("borrow_date"),
+                    rs.getString("due_date"),
+                    rs.getString("status")
+            ));
+        }
+
+    } catch (Exception e) {
+        e.printStackTrace();
+    }
+
+    return list;
+}
 }
