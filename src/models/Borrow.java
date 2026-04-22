@@ -9,14 +9,14 @@ public class Borrow {
     private String status;
 
         // OVERLOADED CONSTRUCTOR (used when ID is auto-generated in DB)
-    public Borrow(int bookId, int memberId, String borrowDate, String dueDate, String status) {
-        this.id = 0;
-        this.bookId = bookId;
-        this.memberId = memberId;
-        this.borrowDate = borrowDate;
-        this.dueDate = dueDate;
-        this.status = status;
-    }
+    public Borrow(int id, int bookId, int memberId, String borrowDate, String dueDate, String status) {
+    this.id = id;
+    this.bookId = bookId;
+    this.memberId = memberId;
+    this.borrowDate = borrowDate;
+    this.dueDate = dueDate;
+    this.status = status;
+}
 
 
     // ================= GETTERS =================

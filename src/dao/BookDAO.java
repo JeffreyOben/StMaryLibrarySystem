@@ -237,6 +237,7 @@ public List<Borrow> filterByDate(String start, String end) {
 
         while (rs.next()) {
             list.add(new Borrow(
+                    rs.getInt("id"),
                     rs.getInt("book_id"),
                     rs.getInt("member_id"),
                     rs.getString("borrow_date"),
