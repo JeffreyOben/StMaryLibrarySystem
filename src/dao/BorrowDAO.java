@@ -157,7 +157,7 @@ public class BorrowDAO {
         String sql = "SELECT * FROM borrows WHERE borrow_date BETWEEN ? AND ?";
 
         try (Connection conn = DBConnection.connect();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+            PreparedStatement ps = conn.prepareStatement(sql)) {
 
             ps.setString(1, start);
             ps.setString(2, end);
