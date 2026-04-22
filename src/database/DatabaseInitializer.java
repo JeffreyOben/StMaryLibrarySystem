@@ -1,9 +1,8 @@
 package database;
 
-import utils.PasswordUtil;
-
 import java.sql.Connection;
 import java.sql.Statement;
+import java.sql.ResultSet;
 
 public class DatabaseInitializer {
 
@@ -83,8 +82,7 @@ public class DatabaseInitializer {
                         "(2, 1, 2, '2025-03-02', '2025-03-16', '2025-03-10', 'RETURNED')," +
                         "(3, 3, 3, '2025-03-05', '2025-03-19', NULL, 'BORROWED')",
 
-                "INSERT INTO users (username, password, role) VALUES " +
-                        "('admin', 'admin123', 'ADMIN')," +
+                "INSERT OR IGNORE INTO users (username, password, role) VALUES " +
                         "('librarian1', 'lib123', 'LIBRARIAN')," +
                         "('student1', 'stud123', 'STUDENT')," +
                         "('student2', 'stud456', 'STUDENT')," +
@@ -121,20 +119,22 @@ public class DatabaseInitializer {
     // ================= DEFAULT DATA =================
     private static void insertDefaultData() {
 
-        try (Connection conn = DBConnection.connect();
-             Statement stmt = conn.createStatement()) {
+    String checkSql = "SELECT id FROM users WHERE username = 'admin'";
+    String insertSql = "INSERT INTO users(username, password, role) VALUES ('admin', 'admin123', 'ADMIN')";
 
-            String hashedPassword = PasswordUtil.hash("admin123");
+    try (Connection conn = DBConnection.connect();
+         Statement stmt = conn.createStatement();
+         ResultSet rs = stmt.executeQuery(checkSql)) {
 
-            stmt.execute(
-                    "INSERT OR IGNORE INTO users(username, password, role) VALUES " +
-                            "('admin', '" + hashedPassword + "', 'ADMIN')"
-            );
-
-            System.out.println("✅ Default admin user ready");
-
-        } catch (Exception e) {
-            System.out.println("❌ Default data error: " + e.getMessage());
+        if (!rs.next()) {
+            stmt.executeUpdate(insertSql);
+            System.out.println("✅ Default admin created");
+        } else {
+            System.out.println("✅ Admin already exists");
         }
+
+    } catch (Exception e) {
+        System.out.println("Database initialization error: " + e.getMessage());
     }
+}
 }
